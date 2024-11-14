@@ -41,6 +41,7 @@ public class WordRecommender {
     private void insertSuggestionBySimilarity(ArrayList<String> suggestions, String candidate, String word, int topN) {
         double similarity = getSimilarity(word, candidate);
 
+
         for (int i = 0; i < suggestions.size(); i++) {
             if (getSimilarity(word, suggestions.get(i)) < similarity) {
                 suggestions.add(i, candidate);
