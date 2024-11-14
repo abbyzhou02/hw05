@@ -20,6 +20,7 @@ public class WordRecommender {
             System.out.printf(Util.FILE_OPENING_ERROR);
         }
     }
+
     public boolean isWordInDictionary(String word) {
         return dictionary.contains(word);
     }
