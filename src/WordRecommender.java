@@ -38,7 +38,6 @@ public class WordRecommender {
         return suggestions;
     }
 
-
     private void insertSuggestionBySimilarity(ArrayList<String> suggestions, String candidate, String word, int topN) {
         double similarity = getSimilarity(word, candidate);
 
@@ -98,6 +97,7 @@ public class WordRecommender {
         }
         return similarity;
     }
+
 
     private int calculateRightSimilarity(String word1, String word2) {
         int len1 = word1.length();
