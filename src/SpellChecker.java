@@ -8,33 +8,29 @@ public class SpellChecker {
 
     private WordRecommender wordRecommender;
 
-    // No-argument constructor that prompts for the dictionary file
     public SpellChecker() {
         Scanner scanner = new Scanner(System.in);
         File dictionaryFile = getFile(scanner, Util.DICTIONARY_PROMPT);
-        wordRecommender = new WordRecommender(dictionaryFile.getAbsolutePath());
+        this.wordRecommender = new WordRecommender(dictionaryFile.getAbsolutePath());
     }
 
     public SpellChecker(String dictionaryFile) {
-        wordRecommender = new WordRecommender(dictionaryFile);
+        this.wordRecommender = new WordRecommender(dictionaryFile);
     }
 
     public void start() {
         Scanner scanner = new Scanner(System.in);
-
-        // Step 1: Prompt for spellcheck file
         File fileToCheck = getFile(scanner, Util.FILENAME_PROMPT);
         if (fileToCheck == null) return;
 
-        // Step 2: Output file name
         String outputFileName = fileToCheck.getName().replace(".txt", "_chk.txt");
 
         try (PrintWriter writer = new PrintWriter(outputFileName)) {
             Scanner fileScanner = new Scanner(fileToCheck);
 
-            // Step 3: Process file word by word
             while (fileScanner.hasNext()) {
                 String word = fileScanner.next();
+
                 if (!wordRecommender.isWordInDictionary(word)) {
                     ArrayList<String> suggestions = wordRecommender.getWordSuggestions(word, 2, 0.5, 4);
                     String replacement = getReplacement(scanner, word, suggestions);
@@ -45,51 +41,68 @@ public class SpellChecker {
             }
 
             fileScanner.close();
-            System.out.println(Util.FILE_SUCCESS_NOTIFICATION);
+            System.out.printf(Util.FILE_SUCCESS_NOTIFICATION, fileToCheck.getName(), outputFileName);
         } catch (FileNotFoundException e) {
-            System.out.println("Error in writing output file.");
+            System.out.printf("Error in writing output file.");
         }
     }
 
     private File getFile(Scanner scanner, String prompt) {
         while (true) {
-            System.out.println(prompt);
+            System.out.printf(prompt);
             String filename = scanner.nextLine();
             File file = new File(filename);
             if (file.exists() && !file.isDirectory()) {
-                System.out.println(Util.DICTIONARY_SUCCESS_NOTIFICATION);
+                System.out.printf(Util.DICTIONARY_SUCCESS_NOTIFICATION, filename);
                 return file;
             } else {
-                System.out.println(Util.FILE_OPENING_ERROR);
+                System.out.printf(Util.FILE_OPENING_ERROR);
             }
         }
     }
 
     private String getReplacement(Scanner scanner, String word, ArrayList<String> suggestions) {
-        System.out.printf(Util.MISSPELL_NOTIFICATION);
-        for (int i = 0; i < suggestions.size(); i++) {
-            System.out.println(Util.FOLLOWING_SUGGESTIONS);
-            System.out.println(Util.SUGGESTION_ENTRY);
-        }
-        System.out.println(Util.THREE_OPTION_PROMPT);
+        System.out.printf(Util.MISSPELL_NOTIFICATION, word);
 
-        while (true) {
-            String option = scanner.nextLine();
-            if (option.equals("r")) {
-                System.out.println(Util.AUTOMATIC_REPLACEMENT_PROMPT);
-                int choice = Integer.parseInt(scanner.nextLine());
-                if (choice > 0 && choice <= suggestions.size()) {
-                    return suggestions.get(choice - 1);
+        if (suggestions.isEmpty()) {
+            System.out.printf(Util.NO_SUGGESTIONS);
+            System.out.printf(Util.TWO_OPTION_PROMPT);
+            while (true) {
+                String option = scanner.nextLine();
+                if (option.equals("a")) {
+                    return word;
+                } else if (option.equals("t")) {
+                    System.out.printf(Util.MANUAL_REPLACEMENT_PROMPT);
+                    return scanner.nextLine();
                 } else {
-                    System.out.println("Invalid choice.");
+                    System.out.printf(Util.INVALID_RESPONSE);
                 }
-            } else if (option.equals("a")) {
-                return word;
-            } else if (option.equals("t")) {
-                System.out.println(Util.MANUAL_REPLACEMENT_PROMPT);
-                return scanner.nextLine();
-            } else {
-                System.out.println(Util.INVALID_RESPONSE);
+            }
+        } else {
+            System.out.printf(Util.FOLLOWING_SUGGESTIONS);
+            for (int i = 0; i < suggestions.size(); i++) {
+                System.out.printf(Util.SUGGESTION_ENTRY, i + 1, suggestions.get(i));
+            }
+            System.out.printf(Util.THREE_OPTION_PROMPT);
+
+            while (true) {
+                String option = scanner.nextLine();
+                if (option.equals("r")) {
+                    System.out.printf(Util.AUTOMATIC_REPLACEMENT_PROMPT);
+                    int choice = Integer.parseInt(scanner.nextLine());
+                    if (choice > 0 && choice <= suggestions.size()) {
+                        return suggestions.get(choice - 1);
+                    } else {
+                        System.out.printf(Util.INVALID_RESPONSE);
+                    }
+                } else if (option.equals("a")) {
+                    return word;
+                } else if (option.equals("t")) {
+                    System.out.printf(Util.MANUAL_REPLACEMENT_PROMPT);
+                    return scanner.nextLine();
+                } else {
+                    System.out.printf(Util.INVALID_RESPONSE);
+                }
             }
         }
     }
