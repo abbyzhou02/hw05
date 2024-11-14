@@ -4,7 +4,6 @@ import java.util.Scanner;
 
 public class WordRecommender {
     private ArrayList<String> dictionary = new ArrayList<>();
-
     public WordRecommender(String dictionaryFile) {
         try {
             FileInputStream inputStream = new FileInputStream(dictionaryFile);
