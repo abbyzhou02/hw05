@@ -98,6 +98,7 @@ public class WordRecommender {
         return similarity;
     }
 
+
     private int calculateRightSimilarity(String word1, String word2) {
         int len1 = word1.length();
         int len2 = word2.length();
