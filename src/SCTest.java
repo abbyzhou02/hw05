@@ -22,3 +22,4 @@ public class SCTest {
         assertTrue(output.contains("Spell checking for"), "Expected output to contain success message");
     }
 }
+
