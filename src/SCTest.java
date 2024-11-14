@@ -7,7 +7,6 @@ import java.io.PrintStream;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SCTest {
-
     @Test
     void testStartMethod() {
         String simulatedInput = "engDictionary.txt\ninputFile.txt\na\n";
